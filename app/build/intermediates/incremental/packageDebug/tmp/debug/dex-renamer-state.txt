@@ -1,4 +1,4 @@
-#Sun Nov 10 01:36:36 CET 2019
+#Sun Nov 17 20:26:46 CET 2019
 base.0=/home/bea/AndroidStudioProjects/owl-dictionary/app/build/intermediates/dex/debug/mergeExtDexDebug/out/classes.dex
 path.1=classes.dex
 renamed.1=classes2.dex
