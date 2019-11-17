@@ -1,27 +1,18 @@
 package com.bearm.owlbotdictionary.Model;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 public class Word {
 
     public String word;
-    private String[] definition;
-    private String[] type;
-    private String image;
     public String pronunciation;
+    public ArrayList<WordEntry> entries;
 
-
-    public Word(String word, String[] definition, String[] type, String image, String pronunciation) {
+    public Word(String word, String pronunciation, ArrayList<WordEntry> entries) {
         this.word = word;
-        this.definition = definition;
-        this.image = image;
-        this.type = type;
         this.pronunciation = pronunciation;
-    }
-
-    public Word(String word, String[] definition, String[] type, String pronunciation) {
-        this.word = word;
-        this.definition = definition;
-        this.type = type;
-        this.pronunciation = pronunciation;
+        this.entries = entries;
     }
 
     public Word(String word, String pronunciation) {

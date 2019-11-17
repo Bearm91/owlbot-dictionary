@@ -3,18 +3,22 @@ package com.bearm.owlbotdictionary;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bearm.owlbotdictionary.Adapters.MyAdapter;
 import com.bearm.owlbotdictionary.DAL.WordDAO;
 import com.bearm.owlbotdictionary.Interfaces.IVolleyCallback;
 import com.bearm.owlbotdictionary.Model.Word;
+import com.bearm.owlbotdictionary.Model.WordEntry;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,10 +32,12 @@ public class MainActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
     RecyclerView.Adapter mAdapter;
-    ArrayList<Word> arrayWord;
+    ArrayList<WordEntry> arrayWord;
     TextInputEditText editSearch;
     TextView tvWord;
-    TextView tvPronun;
+    TextView tvPronunciation;
+    TextView tvExampleSubtitle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,17 +45,15 @@ public class MainActivity extends AppCompatActivity {
 
         editSearch = findViewById(R.id.edit_search);
         tvWord = findViewById(R.id.tv_word);
-        tvPronun = findViewById(R.id.tv_pronunciation);
-
+        tvPronunciation = findViewById(R.id.tv_pronunciation);
 
         arrayWord = new ArrayList<>();
-        mAdapter = new MyAdapter(arrayWord);
+        mAdapter = new MyAdapter(arrayWord, getApplicationContext());
 
-        //recyclerView = findViewById(R.id.recycler_list);
+        recyclerView = findViewById(R.id.recycler_list);
 
-//        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-//        recyclerView.setLayoutManager(layoutManager);
-
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
 
 
         url = getString(R.string.url_dictionary);
@@ -89,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
                     public void getResponse(JSONObject response) {
 
                         Log.d("VOLLEY", "RES" + response);
+                        cleanData();
                         //Sending response to be managed
                         parseData(response);
                     }
@@ -96,46 +101,71 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
+
+    /**
+     * Method to clear the data of all the elements of the word entry before displaying new info.
+     */
+    private void cleanData() {
+        //Word
+        tvWord.setText("");
+
+        //Pronunciation
+        tvPronunciation.setText("");
+
+        //Array: Definitions, types, image and examples
+        arrayWord.clear();
+
+
+    }
+
     /**
      * Method for extracting the info from the request response
      *
      * @param response JSONObject obteined in the request made by WordDAO class
-     *
      */
     private void parseData(JSONObject response) {
         try {
 
-            //Extracting single values of the word, like pronunciation and image from the JSON object
+            JSONObject entry;
+            String definition;
+            String type;
+            String example;
+            String urlImage;
+
+            //Extracting single values of the word, like pronunciation, from the JSON object
             String word = response.getString("word");
             String pronunciation = response.getString("pronunciation");
-            //TODO - Extract image
 
             Log.e("WORDS", word + " " + pronunciation);
 
-            //Getting multiple values of the word, like type, definition and examples from the JSON object
+            //Extracting multiple values of the word, like type, definition and examples, from the JSON object
             JSONArray definitions = response.getJSONArray("definitions");
-            //TODO - Extract definitions
-            for (int j = 0; j < definitions.length(); j++) {
-                JSONObject entry = definitions.getJSONObject(j);
+            //TODO - Extract multiple values
+            Log.e("DEFINITIONS.LENGHT", String.valueOf(definitions.length()));
 
+            for (int i = 0; i < definitions.length(); i++) {
+                entry = definitions.getJSONObject(i);
+                definition = String.valueOf(entry.get("definition"));
+                type = entry.getString("type");
+                example = entry.getString("example");
+                urlImage = String.valueOf(entry.get("image_url"));
+
+                Log.e("VALUES", definition + " " + type + " " + example + " " + urlImage);
+
+                arrayWord.add(new WordEntry(definition, type, urlImage, example));
             }
-            //TODO - Extract types
-            //TODO - Extract examples
 
 
             //Log.e("WORDS", definitions + "/ " + types + "/ " + examples);
-
-
-            //Clearing array before adding new search value
-            arrayWord.clear();
-            arrayWord.add(new Word(word, pronunciation));
-
-//            recyclerView.setAdapter(mAdapter);
-
             tvWord.setText(word);
-            tvPronun.setText(pronunciation);
+            if(!pronunciation.equals("null")){
+                tvPronunciation.setText("/" + pronunciation + "/");
+            }
 
-        } catch (JSONException e) {
+            recyclerView.setAdapter(mAdapter);
+
+        } catch (
+                JSONException e) {
             e.printStackTrace();
         }
     }

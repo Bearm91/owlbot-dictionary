@@ -3,13 +3,41 @@
     xmlns:tool="http://schemas.android.com/tools"
     android:id="@+id/listItem"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:baselineAligned="false"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:padding="6dp">
 
+    <ImageView
+        android:id="@+id/iv_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/image_description_text" />
+
+    <TextView
+        android:id="@+id/tv_type"
+        style="@style/WordItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        tool:text="(noun)" />
 
 
+    <TextView
+        android:id="@+id/tv_definition"
+        style="@style/WordItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="12dp"
+        tool:text="@string/tool_definition_text" />
 
+    <TextView
+        android:id="@+id/tv_example"
+        style="@style/WordItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="12dp"
+        android:textStyle="italic"
+        tool:text="@string/example_item_text" />
 
 </LinearLayout>
